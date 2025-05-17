@@ -57,3 +57,10 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+{
+  "walletAddress": "EuBZrzH37h7svf7ZtJZwzq2s4t5SMVZs1Zfn8Uh8y3Gg",
+  "message": "Authentification Solana",
+  "signature": "sR1c7NXzusrj3DdqyxnaSmLiGWwTJocScVMCQexVkd3ztynxeXQMjRqeXvmrXtqzMocSeJtqxU4HtDqgwcGBMuF"
+}

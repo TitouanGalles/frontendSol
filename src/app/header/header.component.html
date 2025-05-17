@@ -1,0 +1,14 @@
+<header class="header glass">
+  <div class="container">
+    <h1 class="logo">🪙 Pile ou Face</h1>
+
+    <div *ngIf="isConnected" class="wallet-info">
+      <span>{{ solBalance?.toFixed(4) }} SOL</span>
+      <button (click)="disconnectWallet()" class="btn secondary-btn">Déconnecter</button>
+    </div>
+
+    <div *ngIf="!isConnected" class="wallet-info">
+      <button (click)="connectWallet()" class="btn primary-btn">Connecter</button>
+    </div>
+  </div>
+</header>
