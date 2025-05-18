@@ -10,5 +10,17 @@
     <div *ngIf="!isConnected" class="wallet-info">
       <button (click)="connectWallet()" class="btn primary-btn">Connecter</button>
     </div>
+
+    <!-- Affiche le formulaire pseudo si connecté mais pas de pseudo -->
+    <div *ngIf="isConnected && !pseudo" class="pseudo-form">
+      <input type="text" placeholder="Entrez votre pseudo" [(ngModel)]="pseudoInput" />
+      <button (click)="createUser()" class="btn primary-btn">Valider</button>
+      <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+    </div>
+    
+    <!-- Affiche le pseudo si connecté et pseudo existant -->
+    <div *ngIf="isConnected && pseudo" class="pseudo-display">
+      <span>Bienvenue, {{ pseudo }} !</span>
+    </div>
   </div>
 </header>

@@ -132,7 +132,7 @@ export class HeaderComponent {
   loadOrCreateUser() {
     if (!this.walletAddress) return;
 
-    this.http.get<User>(`http://localhost:3000/users/${this.walletAddress}`).subscribe({
+    this.http.get<User>(`https://solapp.onrender.com/users/${this.walletAddress}`).subscribe({
       next: user => {
         this.pseudo = user.pseudo;
         this.pseudoInput = user.pseudo;
@@ -155,7 +155,7 @@ export class HeaderComponent {
       return;
     }
 
-    this.http.post<User>('http://localhost:3000/users', {
+    this.http.post<User>('https://solapp.onrender.com/users', {
       wallet: this.walletAddress,
       pseudo: this.pseudoInput.trim()
     }).subscribe({

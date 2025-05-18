@@ -64,7 +64,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy {
   }
 
   loadGames() {
-    this.http.get<Game[]>('http://localhost:3000/games').subscribe({
+    this.http.get<Game[]>('https://solapp.onrender.com/games').subscribe({
       next: data => this.games = data.filter(g => g.status === 'waiting'),
       error: () => this.errorMsg = 'Erreur chargement des parties'
     });
@@ -80,7 +80,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.http.post<Game>('http://localhost:3000/games', {
+    this.http.post<Game>('https://solapp.onrender.com/games', {
       player: this.wallet,
       choice: this.newGame.choice,
       amount: this.newGame.amount
@@ -103,7 +103,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.http.post<Game>(`http://localhost:3000/games/${gameId}/join`, {
+    this.http.post<Game>(`https://solapp.onrender.com/games/${gameId}/join`, {
       player: this.wallet
     }).subscribe({
       next: (game) => {
@@ -120,7 +120,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy {
 
   pollGameStatus(gameId: string) {
     this.pollingInterval = setInterval(() => {
-      this.http.get<Game>(`http://localhost:3000/games/${gameId}`).subscribe({
+      this.http.get<Game>(`https://solapp.onrender.com/games/${gameId}`).subscribe({
         next: (game) => {
           if (game.status === 'finished') {
             clearInterval(this.pollingInterval);
