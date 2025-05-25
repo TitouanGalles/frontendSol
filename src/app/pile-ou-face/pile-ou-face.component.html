@@ -1,72 +1,132 @@
-<div class="container">
-  <h1 class="title">🪙 Pile ou Face</h1>
-
-  <div class="info">
-    <span>👤 {{ pseudo || 'Pseudo inconnu' }}</span>
-    <span>💼 {{ wallet || 'Wallet inconnu' }}</span>
-  </div>
-
-  <div class="form-card">
-    <h2>Créer une partie</h2>
-    <div class="form-group">
-      <select [(ngModel)]="newGame.choice">
-        <option value="pile">Pile</option>
-        <option value="face">Face</option>
-      </select>
-      <input type="number" [(ngModel)]="newGame.amount" placeholder="Montant" />
-      <button (click)="createGame()">🎮 Créer</button>
-      <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coinflip</title>
+</head>
+<body>
+  <div class="toast-container" *ngFor="let notif of notifications">
+    <div class="neon-toast">
+      <span>{{ notif.message }}</span>
     </div>
   </div>
 
-  <div class="game-list">
-    <h2>Parties disponibles</h2>
-    <div *ngFor="let game of games" class="game-item">
-      <span>{{ game.playerPseudo }} ({{ game.amount }} SOL)</span>
-      <button (click)="joinGame(game._id)">🔗 Rejoindre</button>
+  <div class="top-bar">
+  <div class="coinflip-container">
+    <div class="logo-line">
+      <div id="three-container"></div>
+      <h1 class="title">COINFLIP</h1>
     </div>
+    <p class="subtitle">The classic 50/50 game</p>
   </div>
 
-  <!-- Modal commune timer + résultat -->
-  <div *ngIf="showTimerModal || showResultModal" class="modal-backdrop">
-    <div class="modal-content">
-      
-      <!-- Affichage du timer -->
-      <div *ngIf="showTimerModal" class="timer-modal">
-        <h2>⏳ Partie démarrage dans {{ countdown }}s</h2>
-        <div class="players">
-          <div class="player">{{ lastGameResult?.playerPseudo || 'Hôte' }}</div>
-          <div class="vs">vs</div>
-          <div class="player">{{ lastGameResult?.opponentPseudo || 'Adversaire' }}</div>
-        </div>
-      </div>
+  <div class="bet-container">
+    <label class="label-top">Bet Amount</label>
+    <div class="bet-line">
+      <input
+      id="bet-input"
+      type="number"
+      class="input"
+      [(ngModel)]="newGame.amount"
+    />
+    
+    <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.1">+0.1</button>
+    <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.4">+0.4</button>
+    
 
-      <!-- Affichage du résultat -->
-      <div *ngIf="showResultModal" class="result-modal">
-        <h2>🎉 Résultat</h2>
-        <p>Choix : <strong>{{ lastGameResult?.choice }}</strong></p>
-        <p>Résultat : <strong>{{ lastGameResult?.result }}</strong></p>
-        <p>
-          Gagnant : 
-          <span [ngClass]="{
-            'winner': lastGameResult?.winner === wallet,
-            'loser': lastGameResult?.winner !== wallet
-          }">
-            {{ lastGameResult?.winner === wallet ? 'Vous 🏆' : 'Adversaire 😢' }}
-          </span>
-        </p>
-        <button class="button mt-4" (click)="closeModal()">Fermer</button>
-      </div>
+      <img
+        src="Solana_logo.png"
+        alt="Pile"
+        class="choice-img"
+        [class.active]="selected === 'pile'"
+        (click)="select('pile')"
+      />
+      <img
+        src="FaceSol.png"
+        alt="Face"
+        class="choice-img"
+        [class.active]="selected === 'face'"
+        (click)="select('face')"
+      />
 
-    </div>
-  </div>
-
-  <!-- Modal attente -->
-  <div *ngIf="waitingModal" class="modal-backdrop">
-    <div class="modal-content">
-      <h2>⏳ En attente d'un adversaire...</h2>
-      <p>Partagez le lien ou attendez quelques instants.</p>
-      <div class="spinner"></div>
+      <button class="create-btn" (click)="createGame()">Create</button>
     </div>
   </div>
 </div>
+
+<div class="games-list">
+  <div class="games-header">
+    <h2>ALL GAMES <span class="count">{{ games.length }}</span></h2>
+    <div class="parties-header">
+  <h2 class="section-title">Parties en cours</h2>
+  <button class="neon-button" (click)="toggleSort()">Trier ↑↓</button>
+</div>
+
+    <div class="headers-right">
+      <span>Status</span>
+      <span>Sort by</span>
+    </div>
+  </div>
+  <div class="neon-container">
+    <div class="game-card" *ngFor="let game of sortedParties">
+      <div class="player-infos">
+          <span class="username">{{ game.playerPseudo }}</span>
+        </div>
+          <div class="status">❌<span>{{ game.status }}</span></div>
+          <div class="amount">{{ game.amount }}</div>
+          <button class="join-btn" (click)="joinGame(game._id)">Join</button>
+      </div>
+    </div>
+  </div>
+
+<!-- MODALE D’ATTENTE AVEC STYLE EXISTANT -->
+<div class="modal-wrapper" *ngIf="waitingModal">
+  <div class="modal-content neon-card">
+    <h2 class="title neon-text">Pile ou Face</h2>
+    <div *ngIf="showCountdown" class="countdown">
+      {{ countdownValue }}
+    </div>
+
+    <div class="modal-game-area">
+      <!-- JOUEUR 1 -->
+      <div class="player-card neon-border">
+        <p class="label-top">Vous</p>
+        <p><strong>Pseudo :</strong> {{ createdGame?.playerPseudo }}</p>
+        <p><strong>Choix :</strong> {{ createdGame?.choice }}</p>
+        <p><strong>Montant :</strong> {{ createdGame?.amount }}</p>
+      </div>
+
+      <!-- COIN / SCÈNE 3D -->
+     <div class="coin-result-wrapper">
+      <div class="coin-3d neon-border" id="three-container-modal"></div>
+
+      <div *ngIf="isResultVisible" class="result-green">
+        <div *ngIf="winner == createdGame?.choice">
+          Winner : {{ createdGame?.playerPseudo }}
+        </div>
+        <div *ngIf="winner != createdGame?.choice">
+          Winner : {{ createdGame?.opponentPseudo }}
+        </div>
+      </div>
+    </div>
+
+      <!-- JOUEUR 2 -->
+      <div class="player-card neon-border">
+        <p class="label-top">Adversaire</p>
+        <ng-container *ngIf="createdGame?.opponent; else loading">
+          <p><strong>Pseudo :</strong> {{ createdGame?.opponentPseudo }}</p>
+          <p><strong>Choix :</strong> {{ createdGame?.choice === 'pile' ? 'face' : 'pile' }}</p>
+          <p><strong>Montant :</strong> {{ createdGame?.amount }}</p>
+        </ng-container>
+        <ng-template #loading>
+          <p class="loading-text">⏳ En attente...</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

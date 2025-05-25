@@ -29,6 +29,10 @@ export class HeaderComponent {
   pseudoInput = '';
   errorMsg = '';
 
+
+  isLoadingPseudo = false;
+
+  chemin = "http://localhost:3000";
   private quickNodeUrl = 'https://powerful-necessary-breeze.solana-mainnet.quiknode.pro/fab7e8bb4d07de3b4d88a3a62363907c6f408570/';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
 
@@ -130,24 +134,26 @@ export class HeaderComponent {
   }
 
   loadOrCreateUser() {
-    if (!this.walletAddress) return;
+  if (!this.walletAddress) return;
+  this.isLoadingPseudo = true;
 
-    this.http.get<User>(`https://solapp.onrender.com/users/${this.walletAddress}`).subscribe({
-      next: user => {
-        this.pseudo = user.pseudo;
-        this.pseudoInput = user.pseudo;
-        this.errorMsg = '';
+  this.http.get<User>(`${this.chemin}/users/${this.walletAddress}`).subscribe({
+    next: user => {
+      this.pseudo = user.pseudo;
+      this.pseudoInput = user.pseudo;
+      this.errorMsg = '';
+      this.userService.setUser(this.walletAddress, this.pseudo);
+      this.isLoadingPseudo = false;
+    },
+    error: () => {
+      this.pseudo = null;
+      this.pseudoInput = '';
+      this.userService.setUser(this.walletAddress, null);
+      this.isLoadingPseudo = false;
+    }
+  });
+}
 
-        // Mets à jour le pseudo dans UserService
-        this.userService.setUser(this.walletAddress, this.pseudo);
-      },
-      error: () => {
-        this.pseudo = null;
-        this.pseudoInput = '';
-        this.userService.setUser(this.walletAddress, null);
-      }
-    });
-  }
 
   createUser() {
     if (!this.walletAddress || !this.pseudoInput.trim()) {
@@ -155,7 +161,7 @@ export class HeaderComponent {
       return;
     }
 
-    this.http.post<User>('https://solapp.onrender.com/users', {
+    this.http.post<User>(`${this.chemin}/users`, {
       wallet: this.walletAddress,
       pseudo: this.pseudoInput.trim()
     }).subscribe({
