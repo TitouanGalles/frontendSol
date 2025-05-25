@@ -50,7 +50,7 @@
         (click)="select('face')"
       />
 
-      <button class="create-btn" (click)="createGame()">Create</button>
+      <button class="create-btn" (click)="depositAndCreateGame()">Create</button>
     </div>
   </div>
 </div>
@@ -75,7 +75,7 @@
         </div>
           <div class="status">❌<span>{{ game.status }}</span></div>
           <div class="amount">{{ game.amount }}</div>
-          <button class="join-btn" (click)="joinGame(game._id)">Join</button>
+          <button class="join-btn" (click)="joinGameWithDeposit(game._id, game.amount)">Join</button>
       </div>
     </div>
   </div>
