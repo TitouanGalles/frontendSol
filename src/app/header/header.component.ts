@@ -32,7 +32,7 @@ export class HeaderComponent {
 
   isLoadingPseudo = false;
 
-  chemin = "http://localhost:3000";
+  chemin = "https://solapp.onrender.com";
   private quickNodeUrl = 'https://powerful-necessary-breeze.solana-mainnet.quiknode.pro/fab7e8bb4d07de3b4d88a3a62363907c6f408570/';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
 

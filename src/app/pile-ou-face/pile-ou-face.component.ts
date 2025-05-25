@@ -31,7 +31,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   newGame = { choice: 'pile', amount: 0 };
   errorMsg = '';
 
-  chemin = "http://localhost:3000";
+  chemin = "https://solapp.onrender.com";
 
   showCountdown = false;
   countdownValue = 0;
