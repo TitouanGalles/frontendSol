@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
   private socket: Socket;
-  private readonly SERVER_URL = 'http://localhost:3000'; // à adapter selon ton backend
+  chemin = "https://solapp.onrender.com";
+  private readonly SERVER_URL = this.chemin; // à adapter selon ton backend
 
   constructor() {
     // Connexion au serveur Socket.IO
