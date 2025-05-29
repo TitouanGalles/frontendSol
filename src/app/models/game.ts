@@ -9,4 +9,5 @@ export interface Game {
     opponentPseudo?: string;
     result?: 'pile' | 'face' | undefined;
     winner?: string;
+    lock?: boolean;
   }

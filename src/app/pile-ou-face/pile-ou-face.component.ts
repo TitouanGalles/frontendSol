@@ -35,6 +35,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
 
   showCountdown = false;
   countdownValue = 0;
+  buttonCloseModal = false;
 
   wallet: string | null = null;
   pseudo: string | null = null;
@@ -86,11 +87,12 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private http: HttpClient, private userService: UserService, private ngZone: NgZone, private window: Window, private socketService: SocketService, private solanaService: SolanaService) {}
 
   ngOnInit() {
+    this.buttonCloseModal = false;
     this.userService.wallet$.subscribe(w => this.wallet = w);
     this.userService.pseudo$.subscribe(p => this.pseudo = p);
-    this.loadGames();
+    //this.loadGames();
 
-    this.refreshGamesInterval = setInterval(() => this.loadGames(), 1000);
+    //this.refreshGamesInterval = setInterval(() => this.loadGames(), 1000);
 
     this.socketService.listen<Game>('player-joined').subscribe(updatedGame => {
       if (this.createdGame && updatedGame._id === this.createdGame._id) {
@@ -103,6 +105,8 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
+    this.socketService.emit('request-waiting-games');
+
     this.socketService.listen<{ result: 'pile' | 'face' }>('game-started').subscribe(data => {
       console.log("listen game started")
       this.createdGame!.result = data.result;
@@ -110,6 +114,26 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
       this.createdGame!.status = 'terminer';
     });
 
+    this.socketService.listen<Game>('game-created').subscribe(game => {
+      if (game.status === 'waiting') {
+        this.games.push(game);
+      }
+    });
+
+    this.socketService.listen<Game>('game-updated').subscribe(updatedGame => {
+      const index = this.games.findIndex(g => g._id === updatedGame._id);
+      if (index !== -1) {
+        if (updatedGame.status === 'waiting') {
+          this.games[index] = updatedGame;
+        } else {
+          this.games.splice(index, 1); // retirer si plus waiting
+        }
+      }
+    });
+
+    this.socketService.listen<Game[]>('waiting-games').subscribe(games => {
+      this.games = games;
+    });
 
   }
 
@@ -245,31 +269,56 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async joinGameWithDeposit(gameId: string, amount: number) {
-    if (!this.wallet || amount <= 0) {
-      this.transactionStatus = 'Montant invalide ou wallet non connecté.';
-      return;
-    }
-
-    this.isLoading = true;
-    this.transactionStatus = 'Dépôt en cours...';
-
-    try {
-      const txId = await this.solanaService.createDepositTransaction(this.wallet, amount);
-      
-      if (txId) {
-        this.transactionStatus = `Transaction confirmée ! ID: ${txId}`;
-        // Appelle la méthode pour rejoindre la partie
-        this.joinGame(gameId);
-      } else {
-        throw new Error('Transaction non signée.');
-      }
-    } catch (error) {
-      console.error('Erreur de dépôt (join) :', error);
-      this.transactionStatus = 'Erreur lors du dépôt ou transaction annulée.';
-    } finally {
-      this.isLoading = false;
-    }
+  if (!this.wallet || amount <= 0) {
+    this.transactionStatus = 'Montant invalide ou wallet non connecté.';
+    return;
   }
+
+  this.isLoading = true;
+  this.transactionStatus = 'Dépôt en cours...';
+
+  // helper timeout
+  const timeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('Timeout de transaction dépassé.'));
+      }, ms);
+
+      promise.then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      }).catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+    });
+  };
+
+  try {
+    await this.http.post(`${this.chemin}/api/games/lock/${gameId}`, {}).toPromise();
+
+    const txId = await timeout(
+      this.solanaService.createDepositTransaction(this.wallet, amount),
+      15000 // ⏱ 15 secondes timeout
+    );
+
+    if (txId) {
+      this.transactionStatus = `Transaction confirmée ! ID: ${txId}`;
+      this.joinGame(gameId);
+    } else {
+      throw new Error('Transaction non signée.');
+    }
+
+  } catch (error) {
+    console.error('Erreur de dépôt (join) :', error);
+    this.transactionStatus = 'Erreur ou délai dépassé lors du dépôt.';
+
+    await this.http.post(`${this.chemin}/api/games/unlock/${gameId}`, {}).toPromise();
+  } finally {
+    this.isLoading = false;
+  }
+}
+
 
 
   createGame() {
@@ -294,7 +343,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
         this.createdGame = game;
         this.waitingModal = true;
         this.pollGameStatus(game._id);
-        this.loadGames();
+        //this.loadGames();
         this.newGame.amount = 0;
         this.errorMsg = '';
   
@@ -328,7 +377,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
         this.socketService.joinGameRoom(updatedGame._id);
         this.socketService.sendGame(updatedGame);
         this.errorMsg = '';
-        this.loadGames();
+        //this.loadGames();
 
         this.http.post<{ result: 'pile' | 'face' }>(
           `${this.chemin}/games/${this.createdGame?._id}/start`, {}
@@ -361,7 +410,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
             });
 
             this.createdGame = null;
-            this.loadGames();
+            //this.loadGames();
           }
         },
         error: () => console.error('Erreur polling')
@@ -517,7 +566,8 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
                 next: (updatedGame: any) => {
                   this.showNotification("🎉 Partie terminée, paiement effectué !");
                   this.createdGame = updatedGame; // Pour afficher le gagnant ou la transaction dans la modale par exemple
-                  console.log(this.createdGame)
+                  console.log(this.createdGame);
+
                 },
                 error: (err) => {
                   this.showNotification("❌ Erreur lors de la fin de partie.");
@@ -525,6 +575,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
               });
           }
+          this.buttonCloseModal = true;
         }, pauseDuration);
       }
     };
@@ -532,5 +583,37 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
     requestAnimationFrame(animateFlip);
   }
  
+  closeAllModal(){
+    this.waitingModal=false;
+    this.buttonCloseModal = false;
+  }
+
+  onCancelClick() {
+    if (confirm('Voulez-vous vraiment annuler et quitter la partie ?')) {
+      this.cancelGame();
+    }
+  }
+
+  cancelGame() {
+    if (!this.wallet) {
+      this.transactionStatus = 'wallet non connecté.';
+      return;
+    }
+    if (!this.createdGame || !this.createdGame._id) return;
+    this.deleteGame(this.createdGame._id).subscribe({
+      next: () => {
+        console.log('Partie supprimée avec succès');
+        this.createdGame = null; // ou naviguer ailleurs
+      },
+      error: (err) => {
+        console.error('Erreur suppression partie', err);
+      }
+    });
+    this.closeAllModal();
+  }
+
+  deleteGame(id: string) {
+    return this.http.delete(`${this.chemin}/api/games/${id}`);
+  }
 
 }

@@ -58,4 +58,8 @@ export class SocketService {
   joinGameRoom(gameId: string): void {
     this.socket.emit('join-game-room', gameId);
   }
+
+  emit(eventName: string, data?: any): void {
+    this.socket.emit(eventName, data);
+  }
 }

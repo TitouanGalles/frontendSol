@@ -59,13 +59,11 @@
   <div class="games-header">
     <h2>ALL GAMES <span class="count">{{ games.length }}</span></h2>
     <div class="parties-header">
-  <h2 class="section-title">Parties en cours</h2>
-  <button class="neon-button" (click)="toggleSort()">Trier ↑↓</button>
+  <h2 class="section-title">Games in progress</h2>
+  <button class="neon-button" (click)="toggleSort()">Sort ↑↓</button>
 </div>
 
     <div class="headers-right">
-      <span>Status</span>
-      <span>Sort by</span>
     </div>
   </div>
   <div class="neon-container">
@@ -75,7 +73,7 @@
         </div>
           <div class="status">❌<span>{{ game.status }}</span></div>
           <div class="amount">{{ game.amount }}</div>
-          <button class="join-btn" (click)="joinGameWithDeposit(game._id, game.amount)">Join</button>
+          <button class="join-btn" (click)="joinGameWithDeposit(game._id, game.amount)" [disabled]="game.lock">Join</button>
       </div>
     </div>
   </div>
@@ -83,7 +81,9 @@
 <!-- MODALE D’ATTENTE AVEC STYLE EXISTANT -->
 <div class="modal-wrapper" *ngIf="waitingModal">
   <div class="modal-content neon-card">
-    <h2 class="title neon-text">Pile ou Face</h2>
+    <button class="close-button" (click)="closeAllModal()" *ngIf="buttonCloseModal">✕</button>
+    <button *ngIf="!createdGame?.opponentPseudo" (click)="onCancelClick()" class="cancel-button">Cancel</button>
+    <h2 class="title neon-text">Heads or tails</h2>
     <div *ngIf="showCountdown" class="countdown">
       {{ countdownValue }}
     </div>
@@ -93,8 +93,8 @@
       <div class="player-card neon-border">
         <p class="label-top">Vous</p>
         <p><strong>Pseudo :</strong> {{ createdGame?.playerPseudo }}</p>
-        <p><strong>Choix :</strong> {{ createdGame?.choice }}</p>
-        <p><strong>Montant :</strong> {{ createdGame?.amount }}</p>
+        <p><strong>Choice :</strong> {{ createdGame?.choice }}</p>
+        <p><strong>Amount :</strong> {{ createdGame?.amount }}</p>
       </div>
 
       <!-- COIN / SCÈNE 3D -->
@@ -113,14 +113,14 @@
 
       <!-- JOUEUR 2 -->
       <div class="player-card neon-border">
-        <p class="label-top">Adversaire</p>
+        <p class="label-top">Opponent</p>
         <ng-container *ngIf="createdGame?.opponent; else loading">
           <p><strong>Pseudo :</strong> {{ createdGame?.opponentPseudo }}</p>
-          <p><strong>Choix :</strong> {{ createdGame?.choice === 'pile' ? 'face' : 'pile' }}</p>
-          <p><strong>Montant :</strong> {{ createdGame?.amount }}</p>
+          <p><strong>Choice :</strong> {{ createdGame?.choice === 'pile' ? 'face' : 'pile' }}</p>
+          <p><strong>Amount :</strong> {{ createdGame?.amount }}</p>
         </ng-container>
         <ng-template #loading>
-          <p class="loading-text">⏳ En attente...</p>
+          <p class="loading-text">⏳ On hold...</p>
         </ng-template>
       </div>
     </div>

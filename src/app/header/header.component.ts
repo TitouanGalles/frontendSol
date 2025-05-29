@@ -33,7 +33,7 @@ export class HeaderComponent {
   isLoadingPseudo = false;
 
   chemin = "https://solapp.onrender.com";
-  private quickNodeUrl = 'https://powerful-necessary-breeze.solana-mainnet.quiknode.pro/fab7e8bb4d07de3b4d88a3a62363907c6f408570/';
+  private quickNodeUrl = 'https://mainnet.helius-rpc.com/?api-key=cb2851f0-e2d7-481a-97f1-04403000595e';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
 
   constructor(private http: HttpClient, private userService: UserService) {}
