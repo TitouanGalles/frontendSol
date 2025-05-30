@@ -4,6 +4,16 @@
       <img src="logo.png" alt="Pile ou Face" height="100" />
     </a>
 
+    <!-- Bouton de sélection de jeu -->
+    <div class="game-selector">
+      <button (click)="toggleGameList()" class="btn">Choisir un jeu</button>
+      <ul *ngIf="showGameList" class="game-list">
+        <li *ngFor="let game of games" (click)="selectGame(game)">
+          {{ game.label }}
+        </li>
+      </ul>
+    </div>
+    
     <div *ngIf="isConnected" class="wallet-info">
       <span>{{ solBalance?.toFixed(4) }} SOL</span>
       <button (click)="disconnectWallet()" class="btn secondary-btn">Déconnecter</button>

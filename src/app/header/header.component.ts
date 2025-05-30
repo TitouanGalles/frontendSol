@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { UserService } from '../services/user.service';  // importe UserService
-
+import { Router } from '@angular/router';
 interface User {
   wallet: string;
   pseudo: string;
@@ -28,7 +28,13 @@ export class HeaderComponent {
   transactionStatus = '';
   pseudoInput = '';
   errorMsg = '';
+  showGameList = false;
 
+
+  games = [
+    { label: 'Pile ou Face', path: '' },
+    { label: 'Réflexe', path: 'reflex' },
+  ];
 
   isLoadingPseudo = false;
 
@@ -36,7 +42,7 @@ export class HeaderComponent {
   private quickNodeUrl = 'https://mainnet.helius-rpc.com/?api-key=cb2851f0-e2d7-481a-97f1-04403000595e';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(private http: HttpClient, private userService: UserService, private router: Router) {}
 
   async connectWallet() {
     const provider = (window as any).solana;
@@ -172,5 +178,14 @@ export class HeaderComponent {
       },
       error: () => this.errorMsg = 'Erreur création utilisateur'
     });
+  }
+
+  toggleGameList() {
+    this.showGameList = !this.showGameList;
+  }
+  
+  selectGame(game: { label: string; path: string }) {
+    this.showGameList = false;
+    this.router.navigate([game.path]);
   }
 }
