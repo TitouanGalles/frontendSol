@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coinflip</title>
+</head>
+<body>
+  <div class="toast-container">
+    <div class="neon-toast">
+      <span></span>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div class="coinflip-container">
+      <div class="logo-line">
+        <div id="three-container"></div>
+        <h1 class="title">Reflex</h1>
+      </div>
+      <p class="subtitle">The classic game</p>
+    </div>
+
+    <div class="bet-container">
+      <label class="label-top">Bet Amount</label>
+      <div class="bet-line">
+        <input
+          id="bet-input"
+          type="number"
+          class="input"
+          [(ngModel)]="newGame.amount"
+        />
+        <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.1">+0.1</button>
+        <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.4">+0.4</button>
+        <button class="create-btn" (click)="createGame()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="games-list">
+    <div class="games-header">
+      <h2>ALL GAMES <span class="count">{{ games.length }}</span></h2>
+      <div class="parties-header">
+        <h2 class="section-title">Games in progress</h2>
+        <button class="neon-button">Sort ↑↓</button>
+      </div>
+    </div>
+
+    <div class="neon-container">
+      <div class="game-card" *ngFor="let game of games">
+        <div class="player-infos">
+          <span class="username">{{ game.host?.pseudo }}</span>
+        </div>
+        <div class="status">❌ <span>{{ game.status }}</span></div>
+        <div class="amount">{{ game.amount }}</div>
+        <button class="join-btn" [disabled]="game.lock" (click)="joinReflexGame(game._id)">Join</button>
+      </div>
+    </div>
+  </div>
+
+<div class="modal-overlay" *ngIf="gameModal">
+  <div class="modal-content">
+    <h2 *ngIf="!createdGame?.opponent?.pseudo">En attente d’un adversaire…</h2>
+    <button class="close-button" (click)="closeGameModal()" *ngIf="createdGame?.opponent?.pseudo">✕</button>
+
+    <div *ngIf="createdGame?.opponent?.pseudo" class="reflex-start">
+      <!-- JOUEUR GAUCHE -->
+      <div class="player player-left">
+        <div class="pseudo">{{ createdGame?.host?.pseudo }}</div>
+        <div class="reaction-time" *ngIf="createdGame?.hostTime !== null">
+          {{ createdGame?.hostTime }} ms
+        </div>
+      </div>
+
+      <div class="scene-wrapper">
+        <canvas #lightsCanvas></canvas>
+      </div>
+
+      <!-- JOUEUR DROIT -->
+      <div class="player player-right">
+        <div class="pseudo">{{ createdGame?.opponent?.pseudo }}</div>
+        <div class="reaction-time" *ngIf="createdGame?.opponentTime !== null">
+          {{ createdGame?.opponentTime }} ms
+        </div>
+      </div>
+    </div>
+
+    <!-- BOUTON DE CLIC -->
+    <button *ngIf="createdGame?.opponent?.pseudo && !clicked" (click)="handleClick()" class="buttonModal">
+      CLIQUER !
+    </button>
+
+    <!-- MESSAGE PERSO SI TU AS CLIQUÉ -->
+    <p *ngIf="clicked && reactionTime !== null && reactionTime > 0" class="result-personal">
+      Ton temps : {{ reactionTime | number: '1.0-0' }} ms
+    </p>
+    <p *ngIf="clicked && reactionTime !== null && reactionTime === 0" class="result-personal">Trop tôt !</p>
+
+    <!-- RÉSULTAT GLOBAL DE LA PARTIE -->
+    <p *ngIf="winner" class="result-final">
+      🏁 {{winner}}
+    </p>
+  </div>
+</div>
+
+
+
+</body>
+</html>

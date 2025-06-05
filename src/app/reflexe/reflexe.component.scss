@@ -1,0 +1,473 @@
+/* Couleurs principales néon rouge */
+$neon-red: #ff0033;
+$neon-red-light: #ff3366;
+$neon-red-dark: #330011;
+$background-dark: #1a0000;
+$text-red: #ff4d66;
+
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #100007;
+  font-family: 'Sora', sans-serif;
+  color: $neon-red;
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.neon-toast {
+  background: $neon-red-dark;
+  border: 2px solid $neon-red;
+  color: $neon-red;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 0 10px rgba($neon-red, 0.6);
+  animation: fadeInOut 4s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem 3rem;
+}
+
+.coinflip-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 90px;
+}
+
+#three-container {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1;
+  font-family: 'Orbitron', sans-serif;
+  color: $neon-red;
+  text-shadow:
+    0 0 8px $neon-red,
+    0 0 15px $neon-red-light,
+    0 0 25px $neon-red-light,
+    0 0 40px $neon-red-light;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: lighten($neon-red, 20%);
+  margin-top: 6px;
+  margin-left: 20%;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.bet-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.label-top {
+  font-size: 1.2rem;
+  color: $neon-red;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-shadow:
+    0 0 6px $neon-red,
+    0 0 12px $neon-red-light;
+}
+
+.bet-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.input {
+  background-color: darken($neon-red-dark, 5%);
+  border: 1px solid $neon-red-light;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: $neon-red;
+  font-size: 1rem;
+  width: 8rem;
+  font-family: inherit;
+  outline: none;
+  box-shadow:
+    0 0 6px $neon-red-light inset;
+  transition: border-color 0.3s;
+
+  &:focus {
+    border-color: $neon-red;
+    box-shadow:
+      0 0 10px $neon-red inset;
+  }
+}
+
+.neon-btn {
+  background-color: darken($neon-red-dark, 5%);
+  border: 2px solid $neon-red;
+  border-radius: 1rem;
+  color: $neon-red;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba($neon-red, 0.4);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: darken($neon-red-dark, 15%);
+    box-shadow: 0 0 12px rgba($neon-red, 0.8);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 6px rgba($neon-red, 0.6);
+  }
+}
+
+.create-btn {
+  background: linear-gradient(145deg, $neon-red-light, $neon-red);
+  border: 2px solid lighten($neon-red, 15%);
+  border-radius: 2rem;
+  color: $background-dark;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.5rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  box-shadow:
+    0 0 16px $neon-red-light,
+    inset 0 0 8px lighten($neon-red, 40%);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow:
+      0 0 22px $neon-red-light,
+      inset 0 0 12px lighten($neon-red, 50%);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow:
+      0 0 12px $neon-red-light,
+      inset 0 0 6px lighten($neon-red, 40%);
+  }
+}
+
+.games-list {
+  color: lighten($neon-red, 20%);
+  font-family: 'Orbitron', sans-serif;
+  background-color: $background-dark;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px $neon-red-light;
+  margin-top: 24px;
+}
+
+.games-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h2 {
+    font-size: 18px;
+    color: $neon-red;
+
+    .count {
+      margin-left: 8px;
+      font-weight: 300;
+    }
+  }
+
+  .headers-right {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: lighten($neon-red, 25%);
+  }
+}
+
+.parties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  color: $neon-red;
+  font-size: 1.5rem;
+  text-shadow:
+    0 0 8px $neon-red,
+    0 0 15px $neon-red-light;
+}
+
+.neon-button {
+  margin-left: 20px;
+  background: transparent;
+  border: 2px solid $neon-red;
+  color: $neon-red;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 10px $neon-red;
+
+  &:hover {
+    background-color: rgba($neon-red, 0.15);
+    box-shadow: 0 0 18px $neon-red;
+  }
+}
+
+.neon-container {
+  border: 2px solid $neon-red;
+  border-radius: 16px;
+  padding: 20px;
+  background-color: darken($background-dark, 5%);
+  box-shadow: 0 0 20px $neon-red;
+  margin-top: 24px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: darken($background-dark, 5%);
+  border: 1px solid $neon-red;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 15px $neon-red-light;
+  color: lighten($neon-red, 20%);
+}
+
+.player-infos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .pseudo {
+    font-weight: 600;
+    color: $neon-red;
+  }
+
+  .choice {
+    font-style: italic;
+  }
+}
+
+//debut modal
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #1c1c2c;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 2px solid cyan;
+  color: white;
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+}
+
+.reflex-start {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 2rem;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+
+  .reaction-time {
+    margin-top: 8px;
+    font-size: 1.2rem;
+    color: cyan;
+  }
+}
+
+.player-left {
+  color: cyan;
+}
+
+.player-right {
+  color: orange;
+}
+
+.scene-wrapper {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+
+
+.buttonModal {
+  margin-top: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(45deg, cyan, magenta);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.buttonModal:disabled {
+  background: #444;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.buttonModal:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+.reaction-time {
+  margin-top: 4px;
+  font-size: 16px;
+  color: #00ffcc;
+}
+
+.result-personal {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: orange;
+}
+
+.result-final {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+}
+
+//fin modal
+
+
+.join-btn {
+    background-color: $neon-red-light;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 18px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  
+    &:hover {
+      background-color: $neon-red;
+    }
+  
+    &:disabled {
+      background-color: #444; // gris foncé
+      color: #aaa;
+      border-color: #666;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #ff4081; // rose néon au hover
+  }
+}
