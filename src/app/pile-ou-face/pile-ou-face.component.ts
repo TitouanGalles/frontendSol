@@ -586,6 +586,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   closeAllModal(){
     this.waitingModal=false;
     this.buttonCloseModal = false;
+    this.winner = undefined;
   }
 
   onCancelClick() {
