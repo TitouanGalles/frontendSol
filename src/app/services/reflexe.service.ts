@@ -7,7 +7,7 @@ import { ReflexeGame } from '../models/game-reflexe.model';
   providedIn: 'root'
 })
 export class ReflexeService {
-  private apiUrl = 'http://localhost:3000/api/reflex'; // adapte selon ton backend
+  private apiUrl = 'https://solapp.onrender.com/api/reflex'; // adapte selon ton backend
 
   constructor(private http: HttpClient) {}
 
