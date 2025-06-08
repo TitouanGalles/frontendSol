@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { UserService } from '../services/user.service';  // importe UserService
+import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
+
 interface User {
   wallet: string;
   pseudo: string;
@@ -18,29 +19,27 @@ interface User {
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  // Plus besoin d'EventEmitter ici, on utilise UserService
   walletAddress: string | null = null;
   pseudo: string | null = null;
   isConnected = false;
   solBalance: number | null = null;
+  solBalanceUSD: number | null = null;
   depositAmount = 0;
   isLoading = false;
   transactionStatus = '';
   pseudoInput = '';
   errorMsg = '';
   showGameList = false;
-
-
-  games = [
-    { label: 'Pile ou Face', path: '' },
-    { label: 'Réflexe', path: 'reflex' },
-  ];
-
   isLoadingPseudo = false;
 
   chemin = "https://solapp.onrender.com";
   private quickNodeUrl = 'https://mainnet.helius-rpc.com/?api-key=cb2851f0-e2d7-481a-97f1-04403000595e';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
+
+  games = [
+    { label: 'Pile ou Face', path: '' },
+    { label: 'Réflexe', path: 'reflex' },
+  ];
 
   constructor(private http: HttpClient, private userService: UserService, private router: Router) {}
 
@@ -55,45 +54,57 @@ export class HeaderComponent {
       const resp = await provider.connect();
       this.walletAddress = resp.publicKey.toString();
       this.isConnected = true;
-
-      // Mets à jour UserService dès connexion
       this.userService.setUser(this.walletAddress, null);
-
       await this.loadOrCreateUser();
       await this.fetchBalance();
     } catch (err) {
       console.error("Erreur de connexion au wallet :", err);
     }
-    console.log(this.walletAddress, this.pseudo);
   }
 
   async disconnectWallet() {
     const provider = (window as any).solana;
-    if (provider?.isPhantom) {
-      await provider.disconnect();
-    }
-    this.isConnected = false;
+    if (provider?.isPhantom) await provider.disconnect();
+
     this.walletAddress = null;
     this.pseudo = null;
-    this.pseudoInput = '';
-    this.solBalance = null;
-    this.transactionStatus = '';
+    this.isConnected = false;
     this.depositAmount = 0;
+    this.solBalance = null;
+    this.solBalanceUSD = null;
+    this.transactionStatus = '';
     this.errorMsg = '';
-
-    // Clear user dans UserService aussi
+    this.pseudoInput = '';
     this.userService.clearUser();
   }
 
   async fetchBalance() {
     if (!this.walletAddress) return;
+
     try {
       const pubkey = new PublicKey(this.walletAddress);
       const balanceLamports = await this.connection.getBalance(pubkey, 'confirmed');
       this.solBalance = balanceLamports / LAMPORTS_PER_SOL;
+
+      const price = await this.getSolanaPriceUSD();
+      this.solBalanceUSD = this.solBalance * price;
     } catch (error) {
       console.error('Erreur récupération solde :', error);
       this.solBalance = null;
+      this.solBalanceUSD = null;
+    }
+  }
+
+  async getSolanaPriceUSD(): Promise<number> {
+    try {
+      const response: any = await this.http
+        .get('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd')
+        .toPromise();
+
+      return response?.solana?.usd || 0;
+    } catch (err) {
+      console.error("Erreur récupération prix SOL :", err);
+      return 0;
     }
   }
 
@@ -102,6 +113,7 @@ export class HeaderComponent {
       this.transactionStatus = 'Montant invalide ou wallet non connecté.';
       return;
     }
+
     this.isLoading = true;
     this.transactionStatus = 'Traitement de la transaction...';
 
@@ -110,8 +122,6 @@ export class HeaderComponent {
       const receiver = new PublicKey("BsxyTzNWAU79exdU9Uj4YSr5N7nGQAXprETP6eYQNsmy");
 
       const { blockhash } = await this.connection.getLatestBlockhash('confirmed');
-      if (!blockhash) throw new Error('Blockhash introuvable');
-
       const lamports = this.depositAmount * LAMPORTS_PER_SOL;
 
       const transaction = new Transaction().add(
@@ -139,27 +149,30 @@ export class HeaderComponent {
     }
   }
 
+  async refreshBalanceDisplay() {
+    await this.fetchBalance();
+  }
+
   loadOrCreateUser() {
-  if (!this.walletAddress) return;
-  this.isLoadingPseudo = true;
+    if (!this.walletAddress) return;
+    this.isLoadingPseudo = true;
 
-  this.http.get<User>(`${this.chemin}/users/${this.walletAddress}`).subscribe({
-    next: user => {
-      this.pseudo = user.pseudo;
-      this.pseudoInput = user.pseudo;
-      this.errorMsg = '';
-      this.userService.setUser(this.walletAddress, this.pseudo);
-      this.isLoadingPseudo = false;
-    },
-    error: () => {
-      this.pseudo = null;
-      this.pseudoInput = '';
-      this.userService.setUser(this.walletAddress, null);
-      this.isLoadingPseudo = false;
-    }
-  });
-}
-
+    this.http.get<User>(`${this.chemin}/users/${this.walletAddress}`).subscribe({
+      next: user => {
+        this.pseudo = user.pseudo;
+        this.pseudoInput = user.pseudo;
+        this.userService.setUser(this.walletAddress, this.pseudo);
+        this.errorMsg = '';
+        this.isLoadingPseudo = false;
+      },
+      error: () => {
+        this.pseudo = null;
+        this.pseudoInput = '';
+        this.userService.setUser(this.walletAddress, null);
+        this.isLoadingPseudo = false;
+      }
+    });
+  }
 
   createUser() {
     if (!this.walletAddress || !this.pseudoInput.trim()) {
@@ -173,8 +186,8 @@ export class HeaderComponent {
     }).subscribe({
       next: user => {
         this.pseudo = user.pseudo;
-        this.errorMsg = '';
         this.userService.setUser(this.walletAddress, this.pseudo);
+        this.errorMsg = '';
       },
       error: () => this.errorMsg = 'Erreur création utilisateur'
     });
@@ -183,7 +196,7 @@ export class HeaderComponent {
   toggleGameList() {
     this.showGameList = !this.showGameList;
   }
-  
+
   selectGame(game: { label: string; path: string }) {
     this.showGameList = false;
     this.router.navigate([game.path]);

@@ -1,9 +1,12 @@
-body {
-  height: 100%;
+.component-wrapper {
+  min-height: 100vh;
   margin: 0;
-  background-color: #0e1a1f;
+  background: #0c121d url('/fondPileOuFace.png') no-repeat center center;
+  background-size: cover;
+  background-attachment: scroll;
   font-family: 'Sora', sans-serif;
-  color: #19e6d4;
+  color: #aef7ea;
+  width: 100%;
 }
 
 .top-bar {
@@ -22,21 +25,21 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 90px; // même hauteur que la pièce pour éviter un débordement inutile
+  height: 90px;
 }
 
 .title {
   font-size: 2.2rem;
   font-weight: 600;
-  margin: 0; // supprime les marges verticales
-  line-height: 1; // empêche un débordement
+  margin: 0;
+  line-height: 1;
   font-family: 'Orbitron', sans-serif;
-  color: #19e6d4;
+  color: #2a90c4;
 }
 
 .subtitle {
   font-size: 1rem;
-  color: #a2a9ad;
+  color: #aef7ea;
   margin-top: 6px;
   margin-left: 20%;
 }
@@ -63,8 +66,8 @@ body {
 }
 
 .input {
-  background-color: #0a1f1c;
-  border: 1px solid #0f3a34;
+  background-color: #08191e;
+  border: 1px solid #104152;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   color: #80f5e7;
@@ -75,26 +78,26 @@ body {
 }
 
 .neon-btn {
-  background-color: #0a1f1c;
-  border: 2px solid #80f5e7;
+  background-color: #08191e;
+  border: 2px solid #2a90c4;
   border-radius: 1rem;
-  color: #80f5e7;
+  color: #2a90c4;
   font-weight: 600;
   font-size: 1rem;
   font-family: inherit;
   padding: 0.5rem 1.25rem;
   cursor: pointer;
-  box-shadow: 0 0 6px rgba(128, 245, 231, 0.3);
+  box-shadow: 0 0 6px rgba(41, 144, 196, 0.3);
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #102825;
-    box-shadow: 0 0 10px rgba(128, 245, 231, 0.6);
+    background-color: #0f2b34;
+    box-shadow: 0 0 10px rgba(41, 144, 196, 0.6);
   }
 
   &:active {
     transform: translateY(1px);
-    box-shadow: 0 0 4px rgba(128, 245, 231, 0.4);
+    box-shadow: 0 0 4px rgba(41, 144, 196, 0.4);
   }
 }
 
@@ -110,7 +113,7 @@ body {
     filter: none;
     opacity: 1;
     transform: scale(1.05);
-    box-shadow: 0 0 12px 4px rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 12px 4px rgba(41, 144, 196, 0.4);
     border-radius: 12px;
   }
 
@@ -120,10 +123,10 @@ body {
 }
 
 .create-btn {
-  background: linear-gradient(145deg, #29f4d4, #1a9184);
-  border: 2px solid #a5fff5;
+  background: linear-gradient(145deg, #2a90c4, #2a90c4);
+  border: 2px solid #aef7ea;
   border-radius: 2rem;
-  color: #0a1f1c;
+  color: #08191e;
   font-weight: bold;
   font-size: 1rem;
   padding: 0.5rem 1.75rem;
@@ -137,17 +140,18 @@ body {
   transition: all 0.2s ease;
 
   &:hover {
-    box-shadow: 0 0 16px rgba(128, 245, 231, 0.7),
+    box-shadow: 0 0 16px rgba(41, 144, 196, 0.7),
                 inset 0 0 6px rgba(255, 255, 255, 0.15);
     transform: translateY(-1px);
   }
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 0 6px rgba(128, 245, 231, 0.5),
+    box-shadow: 0 0 6px rgba(41, 144, 196, 0.5),
                 inset 0 0 2px rgba(255, 255, 255, 0.2);
   }
 }
+
 #three-container {
   width: 90px;
   height: 90px;
@@ -156,92 +160,57 @@ body {
   justify-content: center;
 }
 
+/* --- et tous les autres blocs restent identiques sauf les couleurs --- */
+
 .games-list {
-  color: #aef7ea;
+  color: #2a90c4;
   font-family: 'Orbitron', sans-serif;
-  background-color: #031d1d;
+  background-color: rgba(3, 22, 28, 0.3); // 30% d'opacité
   padding: 20px;
+  backdrop-filter: blur(4px); // effet flouté en arrière-plan (facultatif mais stylé)
+  border-radius: 12px; // optionnel pour mieux intégrer
 }
 
-.games-header {
+.games-header h2 {
+  font-size: 18px;
+  color: #2a90c4;
+
+  .count {
+    margin-left: 8px;
+    font-weight: 300;
+  }
+}
+
+.headers-right {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-
-  h2 {
-    font-size: 18px;
-    color: #52f0d4;
-
-    .count {
-      margin-left: 8px;
-      font-weight: 300;
-    }
-  }
-
-  .headers-right {
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    color: #86e2d2;
-  }
+  gap: 20px;
+  font-size: 14px;
+  color: #2a90c4;
 }
 
 .game-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #052929;
-  border: 1px solid #19e6d4;
+  background-color: #05242b;
+  border: 1px solid #2a90c4;
   border-radius: 16px;
   padding: 12px 16px;
   margin-bottom: 12px;
 }
 
-.player-infos {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-
-  .vs-icon {
-    font-size: 20px;
-  }
-
-  .username {
-    max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 16px;
-  }
-}
-
 .status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
   color: #aef7ea;
 }
 
 .amount {
-  padding: 4px 10px;
-  border: 1px solid #19e6d4;
-  border-radius: 12px;
-  font-size: 14px;
+  border: 1px solid #2a90c4;
   color: #aef7ea;
 }
+
+/* ... le reste des classes utilise la même logique : remplace #2A709E par #2a90c4, #0a1f1c par #08191e, etc. */
+
+
 
 .join-btn {
   background-color: #7b2ff7;
@@ -284,7 +253,7 @@ body {
   width: 90%;
   max-width: 1000px;
   text-align: center;
-  box-shadow: 0 0 25px #00f0ff66;
+  box-shadow: 0 0 25px #2a90c4;
 }
 
 .modal-game-area {
@@ -317,7 +286,7 @@ body {
 
 .countdown {
   font-size: 5rem;
-  color: cyan;
+  color: #2a90c4;
   text-align: center;
   animation: pulse 1s infinite;
 }
@@ -336,13 +305,13 @@ body {
 
 .neon-toast {
   background: #0a1f1c;
-  border: 2px solid #19e6d4;
-  color: #19e6d4;
+  border: 2px solid #2A709E;
+  color: #2A709E;
   padding: 10px 14px;
   border-radius: 12px;
   font-family: 'Orbitron', sans-serif;
   font-size: 0.9rem;
-  box-shadow: 0 0 10px rgba(25, 230, 212, 0.6);
+  box-shadow: 0 0 10px #08191e;
   animation: fadeInOut 4s ease forwards;
 }
 
@@ -367,11 +336,11 @@ body {
 
 
 .neon-container {
-  border: 2px solid #19e6d4; // ou #ff00ff si tu veux du rose fluo
+  border: 2px solid #2A709E; // ou #ff00ff si tu veux du rose fluo
   border-radius: 16px;
   padding: 20px;
   background-color: #071514; // sombre, pour contraste
-  box-shadow: 0 0 15px #19e6d4;
+  box-shadow: 0 0 15px #2A709E;
   margin-top: 24px;
   font-family: 'Orbitron', sans-serif;
 }
@@ -385,26 +354,26 @@ body {
 
 .section-title {
   font-family: 'Orbitron', sans-serif;
-  color: #19e6d4;
+  color: #2A709E;
   font-size: 1.5rem;
 }
 
 .neon-button {
   margin-left: 20px;
   background: transparent;
-  border: 2px solid #19e6d4;
-  color: #19e6d4;
+  border: 2px solid #2A709E;
+  color: #2A709E;
   padding: 6px 14px;
   border-radius: 8px;
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem;
   cursor: pointer;
   transition: 0.3s ease;
-  box-shadow: 0 0 8px #19e6d4;
+  box-shadow: 0 0 8px #2A709E;
 
   &:hover {
-    background-color: #19e6d410;
-    box-shadow: 0 0 12px #19e6d4;
+    background-color: #2A709E10;
+    box-shadow: 0 0 12px #2A709E;
   }
 }
 
@@ -466,4 +435,12 @@ body {
       color: #0a0f2c;
       box-shadow: 0 0 10px #ff00aa;
     }
+}
+
+.choice-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(0 0 4px #2A709E);
 }

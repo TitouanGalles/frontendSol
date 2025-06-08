@@ -121,6 +121,7 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.socketService.listen<Game>('game-updated').subscribe(updatedGame => {
+      console.log("update");
       const index = this.games.findIndex(g => g._id === updatedGame._id);
       if (index !== -1) {
         if (updatedGame.status === 'waiting') {
@@ -129,6 +130,10 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
           this.games.splice(index, 1); // retirer si plus waiting
         }
       }
+    });
+
+    this.socketService.listen<void>('gameSupp').subscribe(() => {
+      this.loadGames(); // recharge toutes les parties waiting
     });
 
     this.socketService.listen<Game[]>('waiting-games').subscribe(games => {
@@ -242,8 +247,14 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async depositAndCreateGame() {
-    if (!this.wallet || this.newGame.amount <= 0) {
-      this.transactionStatus = 'Montant invalide ou wallet non connecté.';
+    if (!this.wallet) {
+      this.errorMsg = 'Wallet not connected.';
+      this.showNotification(this.errorMsg);
+      return;
+    }
+    if (!this.wallet || this.newGame.amount <= 0.0099) {
+      this.errorMsg = 'Invalid amount, minimum amount = 0.01';
+      this.showNotification(this.errorMsg);
       return;
     }
 
@@ -269,8 +280,8 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async joinGameWithDeposit(gameId: string, amount: number) {
-  if (!this.wallet || amount <= 0) {
-    this.transactionStatus = 'Montant invalide ou wallet non connecté.';
+  if (!this.wallet) {
+    this.transactionStatus = 'Wallet not connected.';
     return;
   }
 
@@ -413,7 +424,11 @@ export class PileOuFaceComponent implements OnInit, OnDestroy, AfterViewInit {
             //this.loadGames();
           }
         },
-        error: () => console.error('Erreur polling')
+        error: () => {console.error('Erreur polling')
+          clearInterval(this.pollingInterval);
+          this.waitingModal = false;
+          this.createdGame = null;
+        }
       });
     }, 2000);
   }

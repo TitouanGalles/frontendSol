@@ -1,5 +1,6 @@
 // solana.service.ts
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import {
   Connection,
   LAMPORTS_PER_SOL,
@@ -14,11 +15,13 @@ import {
 export class SolanaService {
   private quickNodeUrl = 'https://mainnet.helius-rpc.com/?api-key=cb2851f0-e2d7-481a-97f1-04403000595e';
   private connection = new Connection(this.quickNodeUrl, 'confirmed');
-  private receiverAddress = new PublicKey('BsxyTzNWAU79exdU9Uj4YSr5N7nGQAXprETP6eYQNsmy');
+  private receiverAddress = new PublicKey('tMqXKuv6yGfY8hArgWCbij3ow7AxvHvpyfi8HyGkQpv');
   transactionStatus = '';
   isLoading = false;
   solBalance: number | null = null;
-  
+
+  constructor(private http: HttpClient) {}
+
   async fetchBalance(wallet: string) {
     if (!wallet) return;
     try {
@@ -30,6 +33,7 @@ export class SolanaService {
       this.solBalance = null;
     }
   }
+  
 
   async createDepositTransaction(wallet: string, depositAmount: number): Promise<string> {
   if (!wallet || depositAmount <= 0) {

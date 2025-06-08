@@ -15,7 +15,7 @@
     </div>
     
     <div *ngIf="isConnected" class="wallet-info">
-      <span>{{ solBalance?.toFixed(4) }} SOL</span>
+      <p>SOL : {{ solBalance | number:'1.4-4' }} SOL ≈ {{ solBalanceUSD | number:'1.2-2' }} $</p>
       <button (click)="disconnectWallet()" class="btn secondary-btn">Déconnecter</button>
     </div>
     <div *ngIf="!isConnected" class="wallet-info">

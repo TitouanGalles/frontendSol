@@ -6,127 +6,170 @@
   <title>Coinflip</title>
 </head>
 <body>
-  <div class="toast-container" *ngFor="let notif of notifications">
-    <div class="neon-toast">
-      <span>{{ notif.message }}</span>
+  <div class="component-wrapper">
+    <div class="toast-container" *ngFor="let notif of notifications">
+      <div class="neon-toast">
+        <span>{{ notif.message }}</span>
+      </div>
     </div>
-  </div>
 
-  <div class="top-bar">
-  <div class="coinflip-container">
-    <div class="logo-line">
-      <div id="three-container"></div>
-      <h1 class="title">COINFLIP</h1>
+    <div class="top-bar">
+    <div class="coinflip-container">
+      <div class="logo-line">
+        <div id="three-container"></div>
+        <h1 class="title">COINFLIP</h1>
+      </div>
+      <p class="subtitle">The classic 50/50 game</p>
     </div>
-    <p class="subtitle">The classic 50/50 game</p>
-  </div>
 
-  <div class="bet-container">
-    <label class="label-top">Bet Amount</label>
-    <div class="bet-line">
-      <input
-      id="bet-input"
-      type="number"
-      class="input"
-      [(ngModel)]="newGame.amount"
-    />
-    
-    <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.1">+0.1</button>
-    <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.4">+0.4</button>
-    
-
-      <img
-        src="Solana_logo.png"
-        alt="Pile"
-        class="choice-img"
-        [class.active]="selected === 'pile'"
-        (click)="select('pile')"
+    <div class="bet-container">
+      <label class="label-top">Bet Amount</label>
+      <div class="bet-line">
+        <input
+        id="bet-input"
+        type="number"
+        class="input"
+        min="0.01"
+        [(ngModel)]="newGame.amount"
       />
-      <img
-        src="FaceSol.png"
-        alt="Face"
-        class="choice-img"
-        [class.active]="selected === 'face'"
-        (click)="select('face')"
-      />
+      
+      <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.1">+0.1</button>
+      <button class="neon-btn" (click)="newGame.amount = newGame.amount + 0.4">+0.4</button>
+      
 
-      <button class="create-btn" (click)="depositAndCreateGame()">Create</button>
-    </div>
-  </div>
-</div>
+        <img
+          src="Solana_logo.png"
+          alt="Pile"
+          class="choice-img"
+          [class.active]="selected === 'pile'"
+          (click)="select('pile')"
+        />
+        <img
+          src="FaceSol.png"
+          alt="Face"
+          class="choice-img"
+          [class.active]="selected === 'face'"
+          (click)="select('face')"
+        />
 
-<div class="games-list">
-  <div class="games-header">
-    <h2>ALL GAMES <span class="count">{{ games.length }}</span></h2>
-    <div class="parties-header">
-  <h2 class="section-title">Games in progress</h2>
-  <button class="neon-button" (click)="toggleSort()">Sort ↑↓</button>
-</div>
-
-    <div class="headers-right">
-    </div>
-  </div>
-  <div class="neon-container">
-    <div class="game-card" *ngFor="let game of sortedParties">
-      <div class="player-infos">
-          <span class="username">{{ game.playerPseudo }}</span>
-        </div>
-          <div class="status">❌<span>{{ game.status }}</span></div>
-          <div class="amount">{{ game.amount }}</div>
-          <button class="join-btn" (click)="joinGameWithDeposit(game._id, game.amount)" [disabled]="game.lock">Join</button>
+        <button class="create-btn" (click)="depositAndCreateGame()">Create</button>
       </div>
     </div>
   </div>
 
-<!-- MODALE D’ATTENTE AVEC STYLE EXISTANT -->
-<div class="modal-wrapper" *ngIf="waitingModal">
-  <div class="modal-content neon-card">
-    <button class="close-button" (click)="closeAllModal()" *ngIf="buttonCloseModal">✕</button>
-    <button *ngIf="!createdGame?.opponentPseudo" (click)="onCancelClick()" class="cancel-button">Cancel</button>
-    <h2 class="title neon-text">Heads or tails</h2>
-    <div *ngIf="showCountdown" class="countdown">
-      {{ countdownValue }}
-    </div>
+  <div class="games-list">
+    <div class="games-header">
+      <h2>ALL GAMES <span class="count">{{ games.length }}</span></h2>
+      <div class="parties-header">
+    <h2 class="section-title">Games in progress</h2>
+    <button class="neon-button" (click)="toggleSort()">Sort ↑↓</button>
+  </div>
 
-    <div class="modal-game-area">
-      <!-- JOUEUR 1 -->
-      <div class="player-card neon-border">
-        <p class="label-top">Vous</p>
-        <p><strong>Pseudo :</strong> {{ createdGame?.playerPseudo }}</p>
-        <p><strong>Choice :</strong> {{ createdGame?.choice }}</p>
-        <p><strong>Amount :</strong> {{ createdGame?.amount }}</p>
-      </div>
-
-      <!-- COIN / SCÈNE 3D -->
-     <div class="coin-result-wrapper">
-      <div class="coin-3d neon-border" id="three-container-modal"></div>
-
-      <div *ngIf="isResultVisible" class="result-green">
-        <div *ngIf="winner == createdGame?.choice">
-          Winner : {{ createdGame?.playerPseudo }}
-        </div>
-        <div *ngIf="winner != createdGame?.choice">
-          Winner : {{ createdGame?.opponentPseudo }}
-        </div>
+      <div class="headers-right">
       </div>
     </div>
+    <div class="neon-container">
+      <div class="game-card" *ngFor="let game of sortedParties">
+        <div class="player-infos">
+            <span class="username">{{ game.playerPseudo }}</span>
+            <div class="side">
+              <img
+                *ngIf="game.choice === 'pile'"
+                src="Solana_logo.png"
+                alt="Pile"
+                class="choice-img"
+              />
+              <img
+                *ngIf="game.choice === 'face'"
+                src="FaceSol.png"
+                alt="Face"
+                class="choice-img"
+              />
+            </div>
+          </div>
+            <div class="status">❌<span>{{ game.status }}</span></div>
+            <div class="amount">{{ game.amount }}</div>
+            <button class="join-btn" (click)="joinGameWithDeposit(game._id, game.amount)" [disabled]="game.lock">Join</button>
+        </div>
+      </div>
+    </div>
 
-      <!-- JOUEUR 2 -->
-      <div class="player-card neon-border">
-        <p class="label-top">Opponent</p>
-        <ng-container *ngIf="createdGame?.opponent; else loading">
-          <p><strong>Pseudo :</strong> {{ createdGame?.opponentPseudo }}</p>
-          <p><strong>Choice :</strong> {{ createdGame?.choice === 'pile' ? 'face' : 'pile' }}</p>
+  <!-- MODALE D’ATTENTE AVEC STYLE EXISTANT -->
+  <div class="modal-wrapper" *ngIf="waitingModal">
+    <div class="modal-content neon-card">
+      <button class="close-button" (click)="closeAllModal()" *ngIf="buttonCloseModal">✕</button>
+      <button *ngIf="!createdGame?.opponentPseudo" (click)="onCancelClick()" class="cancel-button">Cancel</button>
+      <h2 class="title neon-text">Heads or tails</h2>
+      <div *ngIf="showCountdown" class="countdown">
+        {{ countdownValue }}
+      </div>
+
+      <div class="modal-game-area">
+        <!-- JOUEUR 1 -->
+        <div class="player-card neon-border">
+          <p class="label-top">Host</p>
+          <p><strong>Pseudo :</strong> {{ createdGame?.playerPseudo }}</p>
+          <p><strong>Choice :</strong> <div class="side">
+            <img
+              *ngIf="createdGame?.choice === 'pile'"
+              src="Solana_logo.png"
+              alt="Pile"
+              class="choice-img"
+            />
+            <img
+              *ngIf="createdGame?.choice === 'face'"
+              src="FaceSol.png"
+              alt="Face"
+              class="choice-img"
+            />
+          </div>
           <p><strong>Amount :</strong> {{ createdGame?.amount }}</p>
-        </ng-container>
-        <ng-template #loading>
-          <p class="loading-text">⏳ On hold...</p>
-        </ng-template>
+        </div>
+
+        <!-- COIN / SCÈNE 3D -->
+      <div class="coin-result-wrapper">
+        <div class="coin-3d neon-border" id="three-container-modal"></div>
+
+        <div *ngIf="isResultVisible" class="result-green">
+          <div *ngIf="winner == createdGame?.choice">
+            Winner : {{ createdGame?.playerPseudo }}
+          </div>
+          <div *ngIf="winner != createdGame?.choice">
+            Winner : {{ createdGame?.opponentPseudo }}
+          </div>
+        </div>
+      </div>
+
+        <!-- JOUEUR 2 -->
+        <div class="player-card neon-border">
+          <p class="label-top">Opponent</p>
+          <ng-container *ngIf="createdGame?.opponent; else loading">
+            <p><strong>Pseudo :</strong> {{ createdGame?.opponentPseudo }}</p>
+            <p><strong>Choice :</strong></p>
+              <div class="side">
+                <img
+                  *ngIf="createdGame?.choice === 'face'"
+                  src="Solana_logo.png"
+                  alt="Pile"
+                  class="choice-img"
+                />
+                <img
+                  *ngIf="createdGame?.choice === 'pile'"
+                  src="FaceSol.png"
+                  alt="Face"
+                  class="choice-img"
+                />
+              </div>
+            <p><strong>Amount :</strong> {{ createdGame?.amount }}</p>
+          </ng-container>
+          <ng-template #loading>
+            <p class="loading-text">⏳ On hold...</p>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 
 </body>
 </html>

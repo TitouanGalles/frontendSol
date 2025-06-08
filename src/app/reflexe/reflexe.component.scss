@@ -5,10 +5,12 @@ $neon-red-dark: #330011;
 $background-dark: #1a0000;
 $text-red: #ff4d66;
 
-body {
+.component-wrapper {
   height: 100%;
   margin: 0;
-  background-color: #100007;
+  background: url('/fondPitSol.png') no-repeat center center;
+  background-attachment: scroll;
+  background-size: cover;
   font-family: 'Sora', sans-serif;
   color: $neon-red;
 }
@@ -90,11 +92,10 @@ body {
   font-family: 'Orbitron', sans-serif;
   color: $neon-red;
   text-shadow:
-    0 0 8px $neon-red,
-    0 0 15px $neon-red-light,
-    0 0 25px $neon-red-light,
-    0 0 40px $neon-red-light;
+    0 0 4px $neon-red,
+    0 0 8px $neon-red-light;
 }
+
 
 .subtitle {
   font-size: 1rem;
@@ -209,12 +210,14 @@ body {
 .games-list {
   color: lighten($neon-red, 20%);
   font-family: 'Orbitron', sans-serif;
-  background-color: $background-dark;
+  background-color: rgba(12, 18, 29, 0.3); // ancien $background-dark avec 30% d’opacité
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 0 20px $neon-red-light;
   margin-top: 24px;
+  backdrop-filter: blur(4px); // optionnel : effet verre dépoli
 }
+
 
 .games-header {
   display: flex;
@@ -314,120 +317,181 @@ body {
 }
 
 //debut modal
-
 .modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  inset: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000;
+  align-items: flex-start; /* 👈 place la modale en haut de l’écran */
+  padding-top: 5vh;        /* 👈 ajoute un peu d’espace avec le haut */
+  z-index: 9999;
 }
 
-.modal-content {
-  background: #1c1c2c;
-  padding: 2rem;
-  border-radius: 8px;
-  border: 2px solid cyan;
-  color: white;
-  text-align: center;
-  max-width: 900px;
+
+.modal-container {
+  background-image: url('/fondModalePitSol.png');
+  background-size: cover;           // <-- adapte l'image à la taille du conteneur
+  background-repeat: no-repeat;     // <-- évite que l'image se répète
+  background-position: center;      // <-- centre bien l'image
+  height: 70%;
+  border-radius: 32px;
+  border: 2px solid #ff003c;
+  box-shadow: 0 0 30px #ff003c;
   width: 100%;
-}
-
-.reflex-start {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 2rem 0;
-  gap: 2rem;
-}
-
-.player {
+  max-width: 1200px;
+  font-family: 'Orbitron', sans-serif;
+  color: #ff4e66;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-weight: bold;
-
-  .reaction-time {
-    margin-top: 8px;
-    font-size: 1.2rem;
-    color: cyan;
-  }
+  position: relative;
 }
 
-.player-left {
-  color: cyan;
-}
 
-.player-right {
-  color: orange;
-}
-
-.scene-wrapper {
+.modal-header {
   width: 100%;
-  height: 300px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background: black;
 }
 
-canvas {
+.solclash-logo {
+  max-width: 300px;
+  height: auto;
+}
+
+.modal-lights {
   width: 100%;
-  height: 100%;
-  display: block;
+  display: flex;
+  justify-content: center;
+  border-radius: 16px;
+  padding: 1rem;
 }
 
-
-
-.buttonModal {
-  margin-top: 1rem;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: white;
-  background: linear-gradient(45deg, cyan, magenta);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s;
+.three-container {
+  width: 350px;
+  height: 120px;
+  background: transparent;
 }
 
-.buttonModal:disabled {
-  background: #444;
-  cursor: not-allowed;
-  transform: none;
+.attenteAdversaire {
+  padding-top: 5%;
+  width: 100%;
+  height: 100%; // important si tu veux que ça prenne tout l'espace dispo
+  display: flex;
+  justify-content: center; // centre horizontalement
+  align-items: center; 
+  padding-left: 25%;    // centre verticalement
 }
 
-.buttonModal:not(:disabled):hover {
-  transform: scale(1.05);
+.modal-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-top: 5%;
+  padding-bottom: 5%;
 }
 
-.reaction-time {
-  margin-top: 4px;
-  font-size: 16px;
-  color: #00ffcc;
-}
-
-.result-personal {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-  color: orange;
-}
-
-.result-final {
-  margin-top: 2rem;
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #fff;
+.player {
+  flex: 1;
+  min-width: 100px;
   text-align: center;
 }
 
+.player-name {
+  font-size: 1.2rem;
+  color: #ff4e66;
+}
+
+.player-time {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px #ff003c;
+}
+
+.player-time-label {
+  font-size: 1rem;
+  color: #ccc;
+  margin-top: 0.5rem;
+}
+
+.victory-badge {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.badge {
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: 2px solid #ff003c;
+  color: #ff003c;
+  box-shadow: 0 0 16px #ff003c;
+}
+
+.badge.lose {
+  border-color: #5b0000;
+  color: #5b0000;
+  box-shadow: 0 0 12px #5b0000;
+}
+
+.modal-button-wrapper {
+  margin-top: 1rem;
+}
+
+.click-button {
+  width: 100%;
+  max-width: 400px;
+  margin: 32px auto 0 auto;
+  padding: 22px 0;
+  background: #000;
+  border: 2.5px solid #ff003c;
+  border-radius: 18px;
+  color: #ff003c;
+  font-family: 'Orbitron', 'Arial Black', Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 20px #ff003c, 0 0 10px #ff003c inset;
+  transition:
+    background 0.2s cubic-bezier(.4,2,.6,1),
+    color 0.2s,
+    box-shadow 0.2s,
+    border-color 0.18s;
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
+
+.click-button:hover {
+  background: #f90f03;
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 32px #f90f03, 0 0 16px #fff inset;
+}
+
+
+.close-button {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #ff003c;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #ff6b8f;
+}
 //fin modal
 
 
